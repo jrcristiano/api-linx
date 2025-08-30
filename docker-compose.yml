@@ -1,0 +1,50 @@
+services:
+  app:
+    container_name: linx_api
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: 1000
+    restart: unless-stopped
+    command: sh ./scripts/pgsql.sh db 5432 -- npm run start:dev
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - linx_node_modules:/app/node_modules
+    working_dir: /app
+    networks:
+      - linx_network
+
+  db:
+    container_name: postgres_db
+    image: postgres:15
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - linx_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  linx_node_modules:
+
+networks:
+  linx_network:
+    driver: bridge
