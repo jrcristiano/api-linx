@@ -1,12 +1,16 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
 COPY . .
 
+RUN apk add --no-cache netcat-openbsd
+
+RUN chmod +x ./scripts/pgsql.sh
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["sh", "./scripts/pgsql.sh", "db", "5432", "--", "npm", "run", "start:dev"]
