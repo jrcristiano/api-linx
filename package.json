@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+		"nest": "nest",
     "seed": "ts-node prisma/seed",
     "prisma:init": "rm -rf prisma/migrations && npx prisma migrate dev --name init",
     "prisma:generate": "prisma generate",

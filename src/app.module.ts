@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from 'prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { HealthCheckModule } from './health-check/health-check.module';
 import { PostModule } from './post/post.module';
 import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
@@ -22,6 +23,7 @@ import { UserModule } from './user/user.module';
 				limit: 30,
 			},
 		]),
+		HealthCheckModule,
 	],
 	controllers: [],
 	providers: [
